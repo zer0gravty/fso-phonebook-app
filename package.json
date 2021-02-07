@@ -9,7 +9,7 @@
     "dev": "nodemon index.js",
     "ui:deploy": "git push heroku master",
     "ui:build": "cd ./clientApp && rm -rf ./build/ && npm run build --prod && rm -rf ../build/ && cp -r build ../",
-    "ui:full": "npm run ui:build && git add . && git commit -m uibuild && ui:deploy"
+    "ui:full": "npm run ui:build && git add . && git commit -m uibuild && npm run ui:deploy"
   },
   "keywords": [],
   "author": "",
