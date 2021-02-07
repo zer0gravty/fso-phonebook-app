@@ -8,8 +8,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "ui:deploy": "git push heroku master",
-    "ui:build": "cd ./clientApp && rm -rf ./build/ && npm run build && rm -rf ../build/ && cp ./build ../",
-    "ui:full": "npm run ui:build && ui:deploy"
+    "ui:build": "cd ./clientApp && rm -rf ./build/ && npm run build --prod && rm -rf ../build/ && cp -r build ../",
+    "ui:full": "npm run ui:build && git add . && git commit -m uibuild && ui:deploy"
   },
   "keywords": [],
   "author": "",
