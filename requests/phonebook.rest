@@ -1,8 +1,8 @@
-DELETE http://localhost:3001/api/persons/1
+DELETE http://localhost:3001/api/persons/60220ba386a0dd2dcc2eb2c6
 ###
 GET http://localhost:3001/api/persons
 ###
-GET http://localhost:3001/api/persons/2
+GET http://localhost:3001/api/persons/60220b4486a0dd2dcc2eb2c5
 Content-Type: application/json
 ###
 # POST to add new person
@@ -10,9 +10,8 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "id": 200,
-    "name": "Joe",
-    "number": "222"
+    "name": "Bloomy",
+    "number": "2223"
 }
 ###
 # Unknown endpoint
