@@ -13,8 +13,8 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "Bloomy",
-    "number": "2223"
+    "name": "Joess",
+    "number": "2353245asdf"
 }
 ###
 # Unknown endpoint

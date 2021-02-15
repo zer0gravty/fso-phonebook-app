@@ -17,6 +17,8 @@ const errorHandler = (error, request, response, next) => {
     console.error(error.message);
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id'});
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({ error: error.message });
     }
     next(error);
 };
@@ -70,14 +72,6 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 app.post('/api/persons', (request, response, next) => {
     const person = request.body;
-    if (!person.name || !person.number) {
-        return response.status(400).json({ error: 'missing required value'});
-    }
-    
-    // if (phonebook.some(entry => entry.name === person.name)) {
-    //     return response.status(400).json({ error: 'name already exists' });
-    // }
-    
     const newPerson = new People({
         name: person.name,
         number: person.number
@@ -89,16 +83,16 @@ app.post('/api/persons', (request, response, next) => {
 });
 
 app.put('/api/persons/:id', (request, response, next) => {
-    if(!request.body.name || !request.body.number){
-        return response.status(400).send({ error: 'missing required request body parameter'});
-    };
-
     const updatedPerson = {
         name: request.body.name,
         number: request.body.number,
     };
 
-    People.findByIdAndUpdate(request.params.id, updatedPerson, { new: true })
+    People.findByIdAndUpdate(request.params.id, updatedPerson, { 
+            new: true,
+            runValidators: true,
+            context: 'query' }
+        )
         .then(updatedPerson => {
             response.json(updatedPerson);
         })

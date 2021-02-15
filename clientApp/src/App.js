@@ -38,11 +38,11 @@ const App = () => {
         phonebookService
           .update(foundPerson.id, {...foundPerson, number: newNumber})
           .then( updatedPerson => {
-            displayBanner(201, 5000);
+            displayBanner(200, 5000);
           })
-          .catch( e => {
-            console.log(`Error updating person's number:\n\t${e}`);
-            displayBanner(404, 5000);
+          .catch(error => {
+            console.log(`Error updating person's number:\n\t${error}`);
+            displayBanner(error.response.status, 3000);
           });
       }
     } else {
@@ -51,9 +51,9 @@ const App = () => {
         .then( newPerson => {
           displayBanner(201, 5000);
         })
-        .catch( e => {
-          console.log(`There was an error in adding the person:\n\t${e}`);
-          displayBanner(500, 5000);
+        .catch(error => {
+          console.log(`There was an error in adding the person:\n\t${error}`);
+          displayBanner(error.response.status, 3000);
         });
     }
 
@@ -67,12 +67,12 @@ const App = () => {
     if(confirmed) {
       phonebookService
         .remove(person.id)
-        .then( () => {
-          setPersons(persons.filter( person => person.id !== id));
+        .then(() => {
+          setStatusCode(204);
         })
-        .catch( e => {
-          console.log(`Error deleting person with id ${id}:\n\t${e}`);
-          displayBanner(404, 5000);
+        .catch(error => {
+          console.log(`Error deleting person with id ${id}:\n\t${error}`);
+          displayBanner(error.response.status, 5000);
         });
     }
   }
