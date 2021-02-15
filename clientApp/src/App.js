@@ -31,8 +31,7 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-    const newId = Date.now();
-    const personObj = { name: newName, number: newNumber, id: newId };
+    const personObj = { name: newName, number: newNumber };
     const foundPerson = persons.find( person => person.name === newName);
     if (foundPerson) {
       if (window.confirm(`${personObj.name} is already added to the phonebook; replace the old number with a new one?`)) {
@@ -40,7 +39,6 @@ const App = () => {
           .update(foundPerson.id, {...foundPerson, number: newNumber})
           .then( updatedPerson => {
             displayBanner(201, 5000);
-            setPersons(persons.map( person => person.id !==  foundPerson.id ? person : updatedPerson) );
           })
           .catch( e => {
             console.log(`Error updating person's number:\n\t${e}`);
@@ -52,7 +50,6 @@ const App = () => {
         .create(personObj)
         .then( newPerson => {
           displayBanner(201, 5000);
-          setPersons(persons.concat(newPerson));
         })
         .catch( e => {
           console.log(`There was an error in adding the person:\n\t${e}`);
@@ -74,8 +71,8 @@ const App = () => {
           setPersons(persons.filter( person => person.id !== id));
         })
         .catch( e => {
-          displayBanner(404, 5000);
           console.log(`Error deleting person with id ${id}:\n\t${e}`);
+          displayBanner(404, 5000);
         });
     }
   }

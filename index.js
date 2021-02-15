@@ -1,18 +1,30 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+
 // custom
 const People = require('./models/phonebook');
+const { response } = require('express');
+
 // setup
 const PORT = process.env.PORT || 3001;
 const app = express();
+// error handling to be used in middleware; see before app.listen
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' });
 }
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message);
+    if (error.name === 'CastError') {
+        return response.status(400).send({ error: 'malformatted id'});
+    }
+    next(error);
+};
 
 app.use(express.json());
 app.use(express.static('build'));
 app.use(cors());
+
 // logging
 morgan.token('post-body', (req) => {
     return Object.keys(req.body).length > 0 ? JSON.stringify(req.body) : '';
@@ -20,8 +32,9 @@ morgan.token('post-body', (req) => {
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-body'));
 
 // routes
-app.get('/api/persons', (request, response) => {
-    People.find({}).then(people => response.json(people));
+app.get('/api/persons', (request, response, next) => {
+    People.find({}).then(people => response.json(people))
+        .catch(error => next(error));
 });
 
 app.get('/info', (request, response) => {
@@ -33,25 +46,29 @@ app.get('/info', (request, response) => {
     });
 });
         
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
     const id = request.params.id;
-    People.findById(id).then(person => {
-        return person ? response.json(person) : response.status(404).end();
-    });
+    People.findById(id)
+        .then(person => {
+            if (person) {
+                response.json(person);
+            } else {
+                response.status(404).end();
+            }
+        })
+        .catch(error => next(error) );
 });
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
     const id = request.params.id;
     People.findByIdAndDelete(id)
         .then(result => {
-            return response.status(204).end();
+            response.status(204).end();
         })
-        .catch(error => {
-            return response.status(400).end();
-        });
+        .catch(error => next(error));
 });
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const person = request.body;
     if (!person.name || !person.number) {
         return response.status(400).json({ error: 'missing required value'});
@@ -66,11 +83,30 @@ app.post('/api/persons', (request, response) => {
         number: person.number
     });
 
-    newPerson.save().then(savedPerson => response.json(savedPerson));
+    newPerson.save()
+        .then(savedPerson => response.json(savedPerson))
+        .catch(error => next(error));
+});
+
+app.put('/api/persons/:id', (request, response, next) => {
+    if(!request.body.name || !request.body.number){
+        return response.status(400).send({ error: 'missing required request body parameter'});
+    };
+
+    const updatedPerson = {
+        name: request.body.name,
+        number: request.body.number,
+    };
+
+    People.findByIdAndUpdate(request.params.id, updatedPerson, { new: true })
+        .then(updatedPerson => {
+            response.json(updatedPerson);
+        })
+        .catch(error => next(error));
 });
 
 app.use(unknownEndpoint);
-
+app.use(errorHandler);
 app.listen(PORT, () => {
     console.log(`Listening on port ${PORT}...`);
 });

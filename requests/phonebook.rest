@@ -1,5 +1,8 @@
 DELETE http://localhost:3001/api/persons/60220ba386a0dd2dcc2eb2c6
 ###
+GET http://localhost:3001/info
+Content-Type: text/html
+###
 GET http://localhost:3001/api/persons
 ###
 GET http://localhost:3001/api/persons/60220b4486a0dd2dcc2eb2c5
@@ -15,4 +18,13 @@ Content-Type: application/json
 }
 ###
 # Unknown endpoint
-GET http://localhost:3001/api/person
+GET http://localhost:3001/api/tacos
+Content-Type: application/json
+###
+PUT http://localhost:3001/api/persons/60220b4486a0dd2dcc2eb2c5
+Content-Type: application/json
+
+{
+    "name": "josebib",
+    "number": "535-555-5542"
+}
