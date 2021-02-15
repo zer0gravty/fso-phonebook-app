@@ -17,14 +17,14 @@ const App = () => {
     phonebookService
       .getAll()
       .then(currentPhonebook => setPersons(currentPhonebook))
-      .catch( e => {
-        console.log(`Error fetching data from database:\n\t${e}`);
+      .catch(error => {
+        console.log(`Error fetching data from database:\n\t${error}`);
       })
   }, [statusCode])
 
   const displayBanner = (code, duration) => {
     setStatusCode(code);
-    setTimeout( () => {
+    setTimeout(() => {
       setStatusCode(null);
     }, duration);
   };
